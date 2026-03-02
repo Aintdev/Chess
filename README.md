@@ -1,159 +1,142 @@
 ﻿# MakingChess
 
-## Kurzbeschreibung
-Ich arbeite daran, eine robuste Zug-Generierung und Legality-Überprüfung zu implementieren. Der Fokus liegt aktuell auf:
-- sauberen Move-Generatoren,
-- Prüfung, ob Züge den eigenen König in Schach lassen,
-- menschenlesbarer Ausgabe von `Piece`-Informationen (Name / Zeichen),
-- Integration mit OpenGL für Fenster/Rendering.
+## Short description
+This project implements the core logic for a chess engine focused on move generation and move legality checks. Current focus areas:
+- clean move generators
+- verifying that moves do not leave the player's king in check
+- human-readable `Piece` output (name / icon)
+- integration with OpenGL for windowing/rendering
 
-## Aktueller Status
-- [x] ~~Grundstrukturen für `Board`, `Piece` und `Move` vorhanden.~~  
-- [x] ~~`Piece::getPieceIcon()` und `Piece::getPieceName()` implementiert (Icon & Name verfügbar).~~  
-- [x] ~~Basis-`movePiece` (Index- und char-Overload) implementiert.~~  
-- [x] ~~`getPieceAt(int,int)` und `getPieceAt(char,int)` implementiert.~~  
-- [x] ~~Hilfsfunktionen `colCharToIndex`, `outOfBoard`, `toLower` vorhanden.~~  
-- [x] ~~`generateMoves(Color)` ruft `getMoves` pro Figur auf (aktuell liefert `getMoves` noch keine Züge).~~  
-- [x] ~~`printBoard` Test-Helper + einfache `main`-Test-Stub vorhanden.~~
+## Current status
+- [x] Core types for `Board`, `Piece` and `Move` exist
+- [x] `Piece::getPieceIcon()` and `Piece::getPieceName()` implemented
+- [x] Basic `movePiece` (index and char overload) implemented
+- [x] `getPieceAt(int,int)` and `getPieceAt(char,int)` implemented
+- [x] Helper functions `colCharToIndex`, `outOfBoard`, `toLower` implemented
+- [x] `generateMoves(Color)` calls `getMoves` per piece
+- [x] `printBoard` test helper and a simple `main` test stub exist
 
-Viele Prüfungen zur Zuglegitimität fehlen noch oder sind unvollständig.
+Many checks for move legality are still missing or incomplete.
 
-# isLegal ToDo Liste
+## isLegal To-Do list
 
-- [x] check if move is inside board
-    - Prüfe, ob `move.toX` und `move.toY` innerhalb 0–7 liegen
-    - Hilfsfunktion: `bool outOfBoard(int x, int y);`
+- [x] Check that move is inside the board
+  - Verify that `move.toX` and `move.toY` are within 0–7
+  - Helper: `bool outOfBoard(int x, int y);`
 
-- [x] check if from-square has a piece
-    - Prüfe, ob auf `move.fromX, move.fromY` ein Piece existiert
-    - Hilfsfunktion: `bool isEmpty(int x, int y);`
+- [x] Check that the source square has a piece
+  - Verify that a piece exists at `move.fromX, move.fromY`
+  - Helper: `bool isEmpty(int x, int y);`
 
-- [x] check if target square is not same color
-    - Stelle sicher, dass das Ziel nicht von einem eigenen Piece belegt ist
-    - Hilfsfunktion: `bool isEnemy(int x, int y, Color ownColor);`
+- [x] Check that target square is not occupied by same color
+  - Ensure the target is not occupied by a friendly piece
+  - Helper: `bool isEnemy(int x, int y, Color ownColor);`
 
-- [ ] check if the piece can move like that
-    - Prüft, ob die Bewegung geometrisch korrekt ist für das Piece
-    - Hilfsfunktion: `bool pieceCanMoveLikeThat(const Move& move);`
-    - Muss berücksichtigen:
-        - [ ] Rook → gerade Linien
-        - [ ] Bishop → Diagonale
-        - [ ] Queen → Rook + Bishop
-        - [ ] Knight → L-Form
-        - [ ] King → 1 Feld + Castling
-        - [ ] Pawn → 1 Feld, 2 Felder, diagonales Capture, en passant
+- [ ] Check if the piece can move in that way (geometric rules)
+  - Helper: `bool pieceCanMoveLikeThat(const Move& move);`
+  - Considerations:
+    - [ ] Rook → straight lines
+    - [ ] Bishop → diagonals
+    - [ ] Queen → rook + bishop movements
+    - [ ] Knight → L-shape
+    - [ ] King → single-square moves + castling
+    - [ ] Pawn → single move, double move, diagonal captures, en passant
 
-        - [ ] check for path blocking for sliding pieces
-            - Prüft, ob Rook, Bishop, Queen auf ihrem Weg nicht von eigenen oder gegnerischen Figuren blockiert werden
+    - [ ] Path blocking for sliding pieces (rook, bishop, queen)
+      - Verify that sliding pieces are not blocked by any piece along their path
 
-- [ ] handle special moves
-    - [ ] castling
-        - King & Rook dürfen noch nicht bewegt sein
-        - Keine Felder zwischen King & Rook
-        - King darf aktuell nicht im Schach stehen
-        - King darf kein Feld auf dem Weg angegriffen sein
-        - Hilfsvariablen: `whiteKingMoved, blackKingMoved, whiteRookAMoved, whiteRookHMoved, ...`
-    - [ ] en passant
-        - Pawn darf diagonal ziehen, wenn `enPassantTarget` gesetzt ist
-        - Nach Zug muss `enPassantTarget` korrekt aktualisiert werden
-        - Hilfsvariable: `std::optional<std::pair<int,int>> enPassantTarget;`
-    - [ ] pawn promotion
-        - Optional für Zug-Gültigkeit, später für UI/Upgrade
+- [ ] Handle special moves
+  - [ ] Castling
+    - King & corresponding rook must not have moved
+    - No pieces between King & rook
+    - King must not currently be in check
+    - King must not pass through an attacked square
+    - Tracking variables: `whiteKingMoved, blackKingMoved, whiteRookAMoved, whiteRookHMoved, ...`
+  - [ ] En passant
+    - Pawn can capture en passant when `enPassantTarget` is set
+    - Update `enPassantTarget` after a double pawn move
+    - Helper variable example: `std::optional<std::pair<int,int>> enPassantTarget;`
+  - [ ] Pawn promotion
+    - Can be handled separately for UI; affects move legality only insofar as the move is allowed
 
-- [ ] simulate move and check king safety
-    - Simuliere den Zug temporär
-    - Prüfe, ob eigener König danach im Schach steht
-    - Hilfsfunktion: `bool wouldBeInCheckAfterMove(const Move& move);`
+- [ ] Simulate the move and check king safety
+  - Temporarily apply the move
+  - Verify whether own king would be in check afterwards
+  - Helper: `bool wouldBeInCheckAfterMove(const Move& move);`
 
-- [ ] implement helper inCheck(Color color)
-    - Prüft, ob der König der angegebenen Farbe aktuell im Schach steht
-    - Alle gegnerischen pseudo-legale Züge prüfen (ohne King-Safety)
-    - Wird von `wouldBeInCheckAfterMove` genutzt
+- [ ] Implement helper `inCheck(Color color)`
+  - Determine whether the king of the given color is currently in check
+  - Check all opponent pseudo-legal moves (without king-safety)
+  - Used by `wouldBeInCheckAfterMove`
 
-- [ ] maintain state for castling rights
-    - bool `whiteKingMoved, blackKingMoved`
-    - bool `whiteRookAMoved, whiteRookHMoved, blackRookAMoved, blackRookHMoved`
+- [ ] Maintain castling rights state
+  - `bool whiteKingMoved, blackKingMoved`
+  - `bool whiteRookAMoved, whiteRookHMoved, blackRookAMoved, blackRookHMoved`
 
-- [ ] maintain state for en passant target
-    - Setzen nach Doppelzug eines Pawns
-    - Zurücksetzen nach dem nächsten Zug
+- [ ] Maintain en passant target state
+  - Set after a pawn double-step
+  - Clear after the next move
 
-- [ ] final isLegal return
-    - Wenn alle Prüfungen bestanden: return true
-    - Sonst: return false
+- [ ] Final `isLegal` return
+  - Return `true` if all checks pass, otherwise `false`
 
-# TODO-Liste (Kurz)
-- [ ] Für Public Methoden Char eingaben akzeptieren um Inputs wie "B2" zu erlauben.
-- [ ] Implementiere folgende Methoden:
-  - [x] `bool isEmpty(int x, int y);`
-    - Prüfe ob feld Leer ist.
-  - [x] `bool isEnemy(int x, int y, Color ownColor);`
-    - Prüfe ob im Feld ein gegner ist.
-  - [x] `bool outOfBoard(int x, int y)`
-    - 2D version vom `outOfBoard(int x);` was schon implimentiert ist.
-  - [x] `std::vector<Move> getMoves(char file, int rank);`
-    - Gehe durch jedes Piece und berechne jeden möglichen Zug.
-    - Für jeden möglichen Zug wird `isLegal` aufgerufen & wenn true:
-      - wird der Zug zur Vektor-Liste hinzugefügt
-    - nachdem alle theoretisch möglichen Züge durchgegangen wurden (z. B.: von B2 nach A1, A2, A3 usw. – für jedes Feld auf dem Brett wird isLegal aufgerufen)
-  - [ ] `bool inCheck(Color color);`
-    - Prüft, ob der König der angegebenen Farbe im Schach steht.
-  - [ ] `isSquareAttacked(int x, int y, Color ownColor)`
-    - Prüft ob ein Feld vom gegner Attackiert wird. 
-  - [ ] `bool wouldBeInCheckAfterMove(const Move& move);`
-    - Simuliert den Zug
-    - gibt das Ergebnis von `inCheck` zurück
-  - [ ] `bool isLegal(const Move& move) const;`
-    - Prüft, ob ein Zug legal ist, indem Folgendes aufgerufen wird:
-      - `wouldBeInCheckAfterMove`
-      - Prüft, ob das Piece sich so bewegen darf
-      - andere Bedingungen, die den Zug verhindern könnten
-    - Wenn irgendeine Bedingung den Zug unmöglich macht, wird einfach 0 zurückgegeben
+## Short TODO list
+- [ ] Accept character input for public methods to allow inputs like "B2"
+- [ ] Implement or verify utility methods:
+  - [x] `bool isEmpty(int x, int y);` — check whether a square is empty
+  - [x] `bool isEnemy(int x, int y, Color ownColor);` — check whether a square contains an enemy piece
+  - [x] `bool outOfBoard(int x, int y)` — 2D version of `outOfBoard(int x)`
+  - [x] `std::vector<Move> getMoves(char file, int rank);` — enumerate possible moves for a piece
+    - For each candidate move, call `isLegal` and add it to the vector if valid
+  - [ ] `bool inCheck(Color color);` — check if the specified color is in check
+  - [ ] `bool isSquareAttacked(int x, int y, Color ownColor);` — check if a square is attacked by the opponent
+  - [ ] `bool wouldBeInCheckAfterMove(const Move& move);` — simulate a move and return the result using `inCheck`
+  - [ ] `bool isLegal(const Move& move) const;` — orchestrate all legality checks
 
-Hinweis: Bei `getMoves` sollen Züge durch Simulieren angewendet und solche, die den König in Schach lassen, mit `continue` übersprungen werden (siehe Projektvorgabe in `.github/copilot-instructions.md`).
+Note: In `getMoves` candidate moves should be simulated and those that leave the king in check should be skipped using `continue` (see `.github/copilot-instructions.md`).
 
-## Erweiterte TODO-Liste
+## Extended TODO list
 
-Core-Logik
-- [ ] Sonderzüge vollständig implementieren:
-  - [ ] Rochade (kurz/lang) — Bedingungen prüfen (`Rook`/`King` unmoved, Felder frei, keine Durchquerung in Schach).
-  - [ ] En Passant — Zug-Validierung und Rückgängigmachung (Undo).
-  - [ ] Bauernumwandlung (Promotion) — Auswahlmechanismus & regelkonforme Ersetzung.
-- [ ] Draw- / Game-End-Checks:
-  - [ ] Schachmatt- und Patt-Erkennung.
-  - [ ] Unzureichendes Material, 50-Move-Rule, Drei-Zeugen-Regel (threefold repetition).
-- [ ] Korrekte Board-Zustandsverwaltung:
-  - [ ] Move-History, `undo()` / `redo()`.
-  - [ ] Reversible / irreversible Zustandsfelder (z.B. en-passant, Castling-Rechte).
+Core logic
+- [ ] Fully implement special moves:
+  - [ ] Castling (king/rook unmoved, clear path, no check on path)
+  - [ ] En passant (validation and undo)
+  - [ ] Pawn promotion (selection and replacement)
+- [ ] Draw / game-end checks:
+  - [ ] Checkmate & stalemate detection
+  - [ ] Insufficient material, 50-move rule, threefold repetition
+- [ ] Correct board state management:
+  - [ ] Move history, `undo()` / `redo()`
+  - [ ] Reversible vs irreversible state (e.g. en-passant, castling rights)
 
-Engine / Suche (optional)
-- [ ] Time-Management / Time Controls (Clocks).
+Engine / search (optional)
+- [ ] Time management / time controls
 
 UI & UX
-- [ ] Eingabemethoden:
-  - [ ] Click-to-move, Drag-and-drop, Keyboard-Shortcuts.
-  - [ ] Visual Feedback: markiere mögliche Züge, letzte Zug, Check-Hervorhebung.
-- [ ] Debug-Overlay: Board-Dumps, Züge-Log, Performance-Counters.
-- [ ] Responsive Fenster/Resizing (Viewport / Aspect Ratio für OpenGL).
+- [ ] Input methods:
+  - [ ] Click-to-move, drag-and-drop, keyboard shortcuts
+  - [ ] Visual feedback: highlight legal moves, last move, check
+- [ ] Debug overlay: board dumps, move logs, performance counters
+- [ ] Responsive window/resize handling (viewport / aspect ratio for OpenGL)
 
-Priorisierungsvorschlag (kurz)
-1. Vollständige `getMoves` + Simulation (`wouldBeInCheckAfterMove`) + Unit-Tests (Perft).
-2. Sonderzüge (Rochade, En Passant, Promotion).
-3. `isInCheck` & Game-End-Checks (Checkmate/Patt).
-4. Undo/Redo.
-5. Basis-Engine (Alpha-Beta) + Performance-Optimierungen.
+Prioritization suggestion
+1. Complete `getMoves` + simulation (`wouldBeInCheckAfterMove`) + unit tests (PERFT)
+2. Special moves (castling, en passant, promotion)
+3. `isInCheck` & game-end checks (checkmate/stalemate)
+4. Undo/redo
+5. Basic engine (alpha-beta) + performance optimizations
 6. UI
 
-## Kurzer Entwicklungsplan
-1. `getMoves` für jede Figur korrekt implementieren (inkl. Sonderzüge).
-2. Simulationsroutine hinzufügen, um `wouldBeInCheckAfterMove` zu ermitteln.
-3. `isInCheck` stabilisieren und in Move-Filter integrieren.
+## Short development plan
+1. Correctly implement `getMoves` for every piece (including special moves)
+2. Add simulation routine to determine `wouldBeInCheckAfterMove`
+3. Stabilize `inCheck` and integrate it into move filtering
 
 ## Build / Run
-- Projekt in Visual Studio 2026 öffnen (`.sln` / `.vcxproj`).
-- Abhängigkeiten: OpenGL (GLEW/GLFW oder eigenes Setup) — siehe `Dependecies`-Ordner.
-- Build-Konfiguration: __Debug__ / __x64__ empfohlen.
+- Open the project in Visual Studio 2022+ (`.sln` / `.vcxproj`)
+- Dependencies: OpenGL (GLEW/GLFW or custom setup) — see the `Dependecies` folder
+- Recommended build configuration: __Debug__ / __x64__
 
---------------- 
+---------------
 
-Ja das ist mit KI geschrieben weil ich kein bock habe eine Readme zu schreiben heul doch
+Note: This README was drafted with AI assistance.

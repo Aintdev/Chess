@@ -23,7 +23,7 @@ bool ChessGame::pathClear(const Move& move) const {
     bool vertMove = move.fromX == move.toX;
     bool horiMove = move.fromY == move.toY;
 
-    // liniare
+    // linear moves
 
     if (vertMove || horiMove)
     {
@@ -42,7 +42,7 @@ bool ChessGame::pathClear(const Move& move) const {
             }
         }
     }
-    // diagonale kommt später
+    // diagonal movement will be implemented later
     return true;
 }
 

@@ -254,7 +254,7 @@ int main() {
 
     auto it = std::find(game.whiteMoves.begin(), game.whiteMoves.end(), m);
 
-    std::cout << ((it != game.whiteMoves.end()) ? "True : Move m befindet sich in whiteMoves" : "False : Move m befindet sich NICHT in whiteMoves");
+    std::cout << ((it != game.whiteMoves.end()) ? "True: Move m is in whiteMoves" : "False: Move m is NOT in whiteMoves");
     
     std::cin.get();
 
