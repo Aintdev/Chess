@@ -59,6 +59,8 @@ class ChessGame {
     bool canBishopMove(const Move& move) const;
     bool canQueenMove(const Move& move) const;
     bool canKingMove(const Move& move) const;
+
+    void enPassantReset();
 public:
     Board board; // Create the Board
 

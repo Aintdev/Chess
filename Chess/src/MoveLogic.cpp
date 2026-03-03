@@ -62,19 +62,28 @@ bool ChessGame::canPawnMove(const Move& move) const {
         !tgt.exists() // Target does not have a Piece
         ) return true;
     // Inital two-square move
-    if (
+    else if (
         !src.hasMoved && // has not moved yet
         move.fromX == move.toX && // it doesnt move horizontally
         move.fromY + (2 * dir) == move.toY && // moves two forward
         !tgt.exists() && //tgt doesnt have a piece on it
         pathClear(move) //the piece in the middle is empty
         ) return true;
-    // Capture Move
-    if (
+    // Capture Move´& Enpassant
+    else if (
         (move.fromX + 1 == move.toX || move.fromX - 1 == move.toX) && //move is one to the right or left
-        move.fromY + dir == move.toY && // move moves one forward
-        tgt.exists() && !tgt.isColor(src.color) // target has to exist and be opposite color
-        ) return true;
+        move.fromY + dir == move.toY) { // move moves one forward
+        const Piece& enpTGT = board[move.toX][move.toY - dir];
+        if (// Normal Take
+            tgt.exists() && !tgt.isColor(src.color) // target has to exist and be opposite color
+            ) return true;
+
+        else if (
+            enpTGT.type == PieceType::PAWN && // Target that did the double forward is a Pawn
+            !enpTGT.isColor(src.color) &&  // Target is of the opposite Color
+            tgt.enPassantable // block i want to move to is actually enPassantable  and someone didnt just do two one moves.
+            ) return true;
+    }
     // Invalid Move
-    return false;
+    else return false;
 }
