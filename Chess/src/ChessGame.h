@@ -6,6 +6,7 @@
 
 enum class PieceType { NONE, PAWN, ROOK, KNIGHT, BISHOP, QUEEN, KING };
 enum class Color { NONE, WHITE, BLACK };
+enum class MoveType { NONE, HORIZONTAL, VERTICAL, DIAGONAL_NE, DIAGONAL_SE, DIAGONAL_SW, DIAGONAL_NW};
 
 struct Piece {
     PieceType type = PieceType::NONE;
@@ -30,9 +31,12 @@ struct Move {
     int fromY;
     int toX;
     int toY;
+    MoveType moveType;
 
     Move(unsigned int ifromX, unsigned int ifromY, unsigned int itoX, unsigned int itoY);
     
+    MoveType getMoveType() const;
+
     bool operator==(const Move& other) const;
 };
 

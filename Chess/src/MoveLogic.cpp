@@ -19,18 +19,15 @@ bool ChessGame::pieceCanMoveLikeThat(const Move& move) const {
     
 }
 
-bool ChessGame::pathClear(const Move& move) const {   
-    bool vertMove = move.fromX == move.toX;
-    bool horiMove = move.fromY == move.toY;
 
-    // linear moves
 
-    if (vertMove || horiMove)
+bool ChessGame::pathClear(const Move& move) const {
+    if (move.moveType == MoveType::HORIZONTAL || move.moveType == MoveType::VERTICAL)
     {
-        unsigned int amt = horiMove
+        unsigned int amt = (move.moveType == MoveType::HORIZONTAL)
             ? std::abs(static_cast<int>(move.fromX) - static_cast<int>(move.toX))
             : std::abs(static_cast<int>(move.fromY) - static_cast<int>(move.toY));
-        if (vertMove) {
+        if (move.moveType == MoveType::VERTICAL) {
             for (int i = 1; i < amt; i++) {
                 int newY = (move.toY > move.fromY) ? move.fromY + i : move.fromY - i;
                 if (getPieceAt(move.fromX, newY)->exists()) return false;
