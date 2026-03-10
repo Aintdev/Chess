@@ -6,7 +6,7 @@
 
 enum class PieceType { NONE, PAWN, ROOK, KNIGHT, BISHOP, QUEEN, KING };
 enum class Color { NONE, WHITE, BLACK };
-enum class MoveType { NONE, HORIZONTAL, VERTICAL, DIAGONAL_NE, DIAGONAL_SE, DIAGONAL_SW, DIAGONAL_NW};
+enum class MoveType { NONE, HORIZONTAL, VERTICAL, DIAGONAL, LSHAPE};
 
 struct Piece {
     PieceType type = PieceType::NONE;
@@ -52,8 +52,8 @@ class ChessGame {
     const Piece* getPieceAt(int x, int y) const;
     bool movePiece(Move& move);
     std::vector<Move> generateMoves(Color color) const;
-    std::vector<Move> getMoves(int x, int y) const; // Checks what moves the Piece at that location has.
-    bool wouldBeInCheckAfterMove(const Move& move) const; //can be const as it simulates
+    std::vector<Move> getMoves(int x, int y) const;
+    bool wouldBeInCheckAfterMove(const Move& move) const; // simulates move
     bool pieceCanMoveLikeThat(const Move& move) const;
 
     // Individual Piece Movement Checks
