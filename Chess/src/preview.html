@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Chess Debug Board</title>
+
+<style>
+body{
+    background:#222;
+    color:white;
+    font-family:Arial;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    height:100vh;
+}
+
+.board-container{
+    display:flex;
+}
+
+.board{
+    display:grid;
+    grid-template-columns:repeat(8,70px);
+    grid-template-rows:repeat(8,70px);
+    border:3px solid #333;
+}
+
+.square{
+    position:relative;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:18px;
+}
+
+.light{
+    background:#f0d9b5;
+}
+
+.dark{
+    background:#b58863;
+}
+
+.coord{
+    position:absolute;
+    bottom:4px;
+    right:6px;
+    font-size:11px;
+    font-weight:bold;
+}
+
+.coord.lighttext{
+    color:#f5f5f5;
+}
+
+.coord.darktext{
+    color:#222;
+}
+
+.notation-x{
+    display:grid;
+    grid-template-columns:repeat(8,70px);
+    margin-top:6px;
+    text-align:center;
+    font-weight:bold;
+}
+
+.notation-y{
+    display:flex;
+    flex-direction:column-reverse;
+    margin-right:6px;
+}
+
+.notation-y span{
+    height:70px;
+    display:flex;
+    align-items:center;
+    justify-content:flex-end;
+    padding-right:5px;
+    font-weight:bold;
+}
+</style>
+</head>
+
+<body>
+
+<div class="board-container">
+<div class="notation-y" id="ny"></div>
+<div class="board" id="board"></div>
+</div>
+
+<div class="notation-x" id="nx"></div>
+
+<script>
+
+const board = document.getElementById("board");
+
+for(let y=7;y>=0;y--){
+    for(let x=0;x<8;x++){
+
+        const sq=document.createElement("div");
+
+        const light=(x+y)%2===0;
+
+        sq.className="square "+(light?"light":"dark");
+
+        const coord=document.createElement("span");
+        coord.className="coord "+(light?"darktext":"lighttext");
+        coord.textContent=`(${x}|${y})`;
+
+        sq.appendChild(coord);
+
+        board.appendChild(sq);
+    }
+}
+
+const nx=document.getElementById("nx");
+const letters=["A","B","C","D","E","F","G","H"];
+
+letters.forEach(l=>{
+    const s=document.createElement("span");
+    s.textContent=l;
+    nx.appendChild(s);
+});
+
+const ny=document.getElementById("ny");
+
+for(let i=1;i<=8;i++){
+    const s=document.createElement("span");
+    s.textContent=i;
+    ny.appendChild(s);
+}
+
+</script>
+
+</body>
+</html>

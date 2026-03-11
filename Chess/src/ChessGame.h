@@ -8,6 +8,17 @@ enum class PieceType { NONE, PAWN, ROOK, KNIGHT, BISHOP, QUEEN, KING };
 enum class Color { NONE, WHITE, BLACK };
 enum class MoveType { NONE, HORIZONTAL, VERTICAL, DIAGONAL, LSHAPE};
 
+struct Position {
+    int x;
+    int y;
+
+    Position() = default;
+    Position(const Move& move);
+    Position(int x, int y);
+    
+    bool operator==(const Position& other);
+};
+
 struct Piece {
     PieceType type = PieceType::NONE;
     Color color = Color::NONE;
@@ -27,13 +38,11 @@ struct Piece {
 using Board = std::array<std::array<Piece, 8>, 8>; // defines the chess board
 
 struct Move {
-    int fromX;
-    int fromY;
-    int toX;
-    int toY;
+    Position from;
+    Position to;
     MoveType moveType;
 
-    Move(unsigned int ifromX, unsigned int ifromY, unsigned int itoX, unsigned int itoY);
+    Move(int fx, int fy, int tx, int ty);
     
     MoveType getMoveType() const;
 
@@ -50,9 +59,8 @@ class ChessGame {
 
 
     const Piece* getPieceAt(int x, int y) const;
-    bool movePiece(Move& move);
+    bool tryMove(Move& move);
     std::vector<Move> generateMoves(Color color) const;
-    std::vector<Move> getMoves(int x, int y) const;
     bool wouldBeInCheckAfterMove(const Move& move) const; // simulates move
     bool pieceCanMoveLikeThat(const Move& move) const;
 
@@ -71,7 +79,7 @@ public:
     ChessGame(); // Constructor
 
     const Piece* getPieceAt(char x, int y) const;
-    bool movePiece(char fromX, int fromY, char toX, int toY);
+    bool tryMove(char fx, int fy, char tx, int ty);
     bool isLegal(const Move& move) const;
     bool inCheck(Color color) const;
     bool isCheckmate(const Color color) const;

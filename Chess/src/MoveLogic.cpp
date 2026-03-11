@@ -1,9 +1,47 @@
 #include "ChessGame.h"
 #include "iostream"
 #include <cstdlib>
+#include <string>
+
+std::vector<Move> ChessGame::generateMoves(Color color) const { // calls every chess pieces moves and puts it all in a vector 
+    std::vector<Move> generatedMoves;
+    if (color == Color::NONE) return generatedMoves;
+
+    generatedMoves.reserve(256); // sollte für alles reichen und ein bischen mehr
+
+    for (int x = 0; x < 8; x++) {
+        for (int y = 0; y < 8; y++) {
+            if (board[x][y].color != color || board[x][y].type == PieceType::NONE)
+                continue;
+
+            for (int tx = 0; tx < 8; tx++) {
+                for (int ty = 0; ty < 8; ty++) {
+                    if (x == tx && y == ty) continue;
+                    if (isLegal(Move(x, y, tx, ty)))
+                        generatedMoves.emplace_back(Move(x, y, tx, ty));
+                }
+            }
+        }
+    }
+    return generatedMoves;
+}
+
+bool ChessGame::isLegal(const Move& move) const {
+    const Piece& srcP = board[move.from.x][move.from.y];
+    const Piece& tgtP = board[move.to.x][move.to.y];
+
+    if (!Helpers::outOfBoard(move.from.x, move.from.y) &&
+        srcP.exists() &&
+        srcP.color != tgtP.color &&
+        pieceCanMoveLikeThat(move))
+        return true;
+    Helpers::logInfo("[SPAM] - Move " + std::to_string(move.from.x) + "|" + std::to_string(move.from.y) + " -> " +
+        std::to_string(move.from.x) + "|" + std::to_string(move.from.y) + " turned out illegal.");
+    return false;
+}
 
 bool ChessGame::pieceCanMoveLikeThat(const Move& move) const {
-    const Piece& srcP = board[move.fromX][move.fromY];
+    const Piece& srcP = board[move.from.x][move.from.y];
     using enum PieceType;
 
     // TODO LIST ->>>>>>>>>>>>>>> REDO ENTIRE SECTION BASED ON THIS: https://chatgpt.com/c/69a38f04-ac9c-832d-9dd3-1ef26d8e3fce 
@@ -20,8 +58,8 @@ bool ChessGame::pieceCanMoveLikeThat(const Move& move) const {
 }
 
 bool ChessGame::pathClear(const Move& move) const {
-    int deltaX = move.toX - move.fromX;
-    int deltaY = move.toY - move.fromY;
+    int deltaX = move.to.x - move.from.x;
+    int deltaY = move.to.y - move.from.y;
     int absDeltaX = std::abs(deltaX);
     int absDeltaY = std::abs(deltaY);
     if (!((deltaX == 0) || (deltaY == 0) || (absDeltaX == absDeltaY)))
@@ -32,8 +70,8 @@ bool ChessGame::pathClear(const Move& move) const {
     int stepNumber = std::max(absDeltaX, absDeltaY);
 
     for (int i = 1; i < stepNumber; ++i) {
-        int x = move.fromX + i * directionX;
-        int y = move.fromY + i * directionY;
+        int x = move.from.x + i * directionX;
+        int y = move.from.y + i * directionY;
         if (getPieceAt(x, y)->exists()) return false;
     }
 
@@ -45,8 +83,8 @@ bool ChessGame::pathClear(const Move& move) const {
 /// -------------------
 
 bool ChessGame::canPawnMove(const Move& move) const {
-    const Piece& src = board[move.fromX][move.fromY];
-    const Piece& tgt = board[move.toX][move.toY];
+    const Piece& src = board[move.from.x][move.from.y];
+    const Piece& tgt = board[move.to.x][move.to.y];
     int dir = (src.color == Color::WHITE) ? 1 : -1;
     // Check if canPawnMove was called correctly
     if (!src.exists() || src.type != PieceType::PAWN) {
@@ -55,23 +93,23 @@ bool ChessGame::canPawnMove(const Move& move) const {
     }
     // Forward move
     if (
-        move.fromX == move.toX && // it doesnt move horizontally
-        move.fromY + dir == move.toY && // Piece can move in that direction and only moves one
+        move.from.x == move.to.x && // it doesnt move horizontally
+        move.from.y + dir == move.to.y && // Piece can move in that direction and only moves one
         !tgt.exists() // Target does not have a Piece
         ) return true;
     // Inital two-square move
     else if (
         !src.hasMoved && // has not moved yet
-        move.fromX == move.toX && // it doesnt move horizontally
-        move.fromY + (2 * dir) == move.toY && // moves two forward
+        move.from.x == move.to.x && // it doesnt move horizontally
+        move.from.y + (2 * dir) == move.to.y && // moves two forward
         !tgt.exists() && //tgt doesnt have a piece on it
         pathClear(move) //the piece in the middle is empty
         ) return true;
     // Capture Move´& Enpassant
     else if (
-        (move.toX - move.fromX) == 1 && //move is one to the right or left
-        move.fromY + dir == move.toY) { // move moves one forward
-        const Piece& enpTGT = board[move.toX][move.toY - dir];
+        (move.to.x - move.from.x) == 1 && //move is one to the right or left
+        move.from.y + dir == move.to.y) { // move moves one forward
+        const Piece& enpTGT = board[move.to.x][move.to.y - dir];
         if (// Normal Take
             tgt.exists() && !tgt.isColor(src.color) // target has to exist and be opposite color
             ) return true;
@@ -87,8 +125,8 @@ bool ChessGame::canPawnMove(const Move& move) const {
 }
 
 bool ChessGame::canRookMove(const Move& move) const {
-    const Piece& src = board[move.fromX][move.fromY];
-    const Piece& tgt = board[move.toX][move.toY];
+    const Piece& src = board[move.from.x][move.from.y];
+    const Piece& tgt = board[move.to.x][move.to.y];
     MoveType type = move.getMoveType();
     using enum MoveType;
     if (!src.exists() || src.type != PieceType::ROOK) {
@@ -102,8 +140,8 @@ bool ChessGame::canRookMove(const Move& move) const {
 }
 
 bool ChessGame::canBishopMove(const Move& move) const {
-    const Piece& src = board[move.fromX][move.fromY];
-    const Piece& tgt = board[move.toX][move.toY];
+    const Piece& src = board[move.from.x][move.from.y];
+    const Piece& tgt = board[move.to.x][move.to.y];
     MoveType type = move.getMoveType();
     using enum MoveType;
     if (!src.exists() || src.type != PieceType::BISHOP) {
@@ -117,8 +155,8 @@ bool ChessGame::canBishopMove(const Move& move) const {
 }
 
 bool ChessGame::canQueenMove(const Move& move) const {
-    const Piece& src = board[move.fromX][move.fromY];
-    const Piece& tgt = board[move.toX][move.toY];
+    const Piece& src = board[move.from.x][move.from.y];
+    const Piece& tgt = board[move.to.x][move.to.y];
     MoveType type = move.getMoveType();
     using enum MoveType;
     if (!src.exists() || src.type != PieceType::QUEEN) {
