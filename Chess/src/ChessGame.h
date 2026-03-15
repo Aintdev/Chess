@@ -95,8 +95,5 @@ public:
 
 namespace Helpers {
     int colCharToIndex(char col);
-
-    bool outOfBoard(int x, int y);
-
     void toLower(std::string& s);
 }

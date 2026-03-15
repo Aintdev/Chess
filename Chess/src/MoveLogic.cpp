@@ -34,7 +34,7 @@ bool ChessGame::isLegal(const Move& move) const {
     const Piece& srcP = board[move.from.x][move.from.y];
     const Piece& tgtP = board[move.to.x][move.to.y];
 
-    if (!Helpers::outOfBoard(move.from.x, move.from.y) &&
+    if (move.from.inBoard() &&
         srcP.exists() &&
         srcP.color != tgtP.color &&
         pieceCanMoveLikeThat(move))
