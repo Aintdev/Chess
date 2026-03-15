@@ -14,8 +14,12 @@ struct Position {
 
     Position() = default;
     Position(int x, int y);
+    Position(char x, int y);
     
     bool operator==(const Position& other);
+
+    int colCharToIndex(char col) const;
+    bool inBoard() const;
 };
 
 struct Piece {
@@ -41,7 +45,7 @@ struct Move {
     Position to;
     MoveType moveType;
 
-    Move(int fx, int fy, int tx, int ty);
+    Move(const Position& from, const Position& to);
     
     MoveType getMoveType() const;
 
@@ -56,10 +60,9 @@ class ChessGame {
     bool blackRookAMoved = false;
     bool blackRookHMoved = false;
 
-
-    const Piece* getPieceAt(int x, int y) const;
-    bool tryMove(Move& move);
-    std::vector<Move> generateMoves(Color color) const;
+    const Piece* getPieceAt(const Position& pos) const;
+    bool tryMove(const Move& move);
+    std::vector<Move> generateMoves(Color color);
     bool wouldBeInCheckAfterMove(const Move& move) const; // simulates move
     bool pieceCanMoveLikeThat(const Move& move) const;
 
@@ -72,13 +75,16 @@ class ChessGame {
     bool canKingMove(const Move& move) const;
 
     void enPassantReset();
+
+    template<typename Func>
+    void forEachSquare(Func f);
 public:
     Board board; // Create the Board
 
     ChessGame(); // Constructor
 
     const Piece* getPieceAt(char x, int y) const;
-    bool tryMove(char fx, int fy, char tx, int ty);
+    bool tryMove(const Position& from, const Position& to);
     bool isLegal(const Move& move) const;
     bool inCheck(Color color) const;
     bool isCheckmate(const Color color) const;
@@ -90,7 +96,6 @@ public:
 namespace Helpers {
     int colCharToIndex(char col);
 
-    bool outOfBoard(int x);
     bool outOfBoard(int x, int y);
 
     void toLower(std::string& s);

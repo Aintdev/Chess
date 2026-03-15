@@ -10,7 +10,6 @@ void printBoard(ChessGame& game) {
         std::cout << y + 1 << " |  ";
         for (int x = 0; x < 8; ++x) {
             char c = game.board[x][y].getPieceIcon();
-
             std::cout << c << " ";
         }
         std::cout << " | " << y + 1 << "\n";

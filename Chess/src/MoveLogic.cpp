@@ -4,26 +4,29 @@
 #include <cstdlib>
 #include <string>
 
-std::vector<Move> ChessGame::generateMoves(Color color) const { // calls every chess pieces moves and puts it all in a vector 
+std::vector<Move> ChessGame::generateMoves(Color color) { // calls every chess pieces moves and puts it all in a vector 
     std::vector<Move> generatedMoves;
     if (color == Color::NONE) return generatedMoves;
 
     generatedMoves.reserve(256); // sollte für alles reichen und ein bischen mehr
 
-    for (int x = 0; x < 8; x++) {
-        for (int y = 0; y < 8; y++) {
-            if (board[x][y].color != color || board[x][y].type == PieceType::NONE)
-                continue;
+    forEachSquare([&](Position from) {
+        const Piece& piece = board[from.x][from.y];
 
-            for (int tx = 0; tx < 8; tx++) {
-                for (int ty = 0; ty < 8; ty++) {
-                    if (x == tx && y == ty) continue;
-                    if (isLegal(Move(x, y, tx, ty)))
-                        generatedMoves.emplace_back(Move(x, y, tx, ty));
-                }
+        // nur die passenden Pieces
+        if (piece.color != color) return;
+
+        // Alle möglichen Zielfelder
+        forEachSquare([&](Position to) {
+            if (from.x == to.x && from.y == to.y) return; // überspringe gleiche Position
+
+            Move m(from, to);
+            if (isLegal(m)) {
+                Log.tprefix("generateMoves/FoundMove").info("Move found.");
+                generatedMoves.emplace_back(from, to);
             }
-        }
-    }
+        });
+    });
     return generatedMoves;
 }
 

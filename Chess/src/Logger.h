@@ -13,12 +13,11 @@ class Logger {
 private:
     std::string prefix = "GLOBAL";
 
-    Logger(); // Konstruktor privat, Singleton Pattern
+    Logger();
 
 public:
     static bool active;
 
-    // ---------------- TempLogger ----------------
     class TempLogger {
     private:
         const Logger& base;
@@ -32,10 +31,9 @@ public:
         void error(const std::string& msg) const;
     };
 
-    // ---------------- Singleton Zugriff ----------------
+   
     static Logger& get();
 
-    // ---------------- Logger Methoden ----------------
     void changePrefix(const std::string& p);
     void info(const std::string& msg) const;
     void warn(const std::string& msg) const;

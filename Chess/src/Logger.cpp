@@ -1,12 +1,10 @@
 #include "Logger.h"
 
-// ---------------- Static Member ----------------
 bool Logger::active = true;
 
-// ---------------- Konstruktor ----------------
 Logger::Logger() {}
 
-// ---------------- TempLogger Implementation ----------------
+// ---------------- TempLogger ----------------
 Logger::TempLogger::TempLogger(const Logger& logger, const std::string& tp)
     : base(logger), tempPrefix(tp.empty() ? "" : "[" + tp + "]") {}
 
@@ -25,13 +23,11 @@ void Logger::TempLogger::error(const std::string& msg) const {
         std::cout << base.prefix << tempPrefix << RED << " [ERROR]" << RESET << " " << msg << std::endl;
 }
 
-// ---------------- Logger Singleton ----------------
 Logger& Logger::get() {
     static Logger instance;
     return instance;
 }
 
-// ---------------- Logger Methoden ----------------
 void Logger::changePrefix(const std::string& p) {
     prefix = "[" + p + "]";
 }
