@@ -11,8 +11,6 @@ Move::Move(const Position& from, const Position& to, Extra ex)
 bool Move::isMoveDouble(Color src) const {
     int dir = (src == Color::WHITE) ? 1 : -1;
     if (moveType == MoveType::VERTICAL && from.y + (2 * dir) == to.y) {
-        Log.tprefix("Test").warn(std::to_string(from.x) + "|" + std::to_string(from.y) + " -> " +
-            std::to_string(to.x) + "|" + std::to_string(to.y) + " war erfolgreich.");
         return true;
     }
     if (from.y == 6 && from.x == 2 && to.x == 2 && to.y == 4)

@@ -26,8 +26,8 @@ struct Position {
 struct Piece {
     PieceType type = PieceType::NONE;
     Color color = Color::NONE;
-    bool hasMoved;
-    bool enPassantable;
+    bool hasMoved = false;
+    bool enPassantable = false;
 
     Piece() = default;
     Piece(PieceType giventype, Color givencolor);
@@ -37,8 +37,6 @@ struct Piece {
     bool isColor(Color exColor) const;
     bool exists() const;
 };
-
-using Board = std::array<std::array<Piece, 8>, 8>; // defines the chess board
 
 struct Move {
     Position from;
@@ -55,7 +53,11 @@ struct Move {
     bool operator==(const Move& other) const;
 };
 
+using Arr8By8 = std::array<std::array<Piece, 8>, 8>;
+
 class ChessGame {
+    Color toMove = Color::WHITE;
+
     bool whiteKingMoved = false;
     bool blackKingMoved = false;
     bool whiteRookAMoved = false;
@@ -64,7 +66,7 @@ class ChessGame {
     bool blackRookHMoved = false;
 
     std::vector<Move> generateMoves(Color color);
-    bool wouldBeInCheckAfterMove(const Move& move) const; // simulates move
+    bool wouldBeInCheckAfterMove(const Move& move) const;
     bool pieceCanMoveLikeThat(const Move& move) const;
 
     // Individual Piece Movement Checks
@@ -77,9 +79,9 @@ class ChessGame {
 
     void enPassantReset();
 public:
-    Board board; // Create the Board
+    Arr8By8 board;
 
-    ChessGame(); // Constructor
+    ChessGame();
 
     bool tryMove(const Move& move);
     const Piece* getPieceAt(const Position& pos) const;
@@ -88,18 +90,23 @@ public:
     bool inCheck(Color color) const;
     bool isCheckmate(const Color color) const;
     bool isStalemate(const Color color) const;
-    bool pathClear(const Move& m) const;
+    bool pathClear(const Move& move) const;
+
+    void clearBoard();
+    void setPiece(const Position& pos, const Piece& p);
+
     template<typename Func>
     void forEachSquare(Func f) {
+        Position pos;
         for (int x = 0; x < 8; x++) {
             for (int y = 0; y < 8; y++) {
-                f(Position(x, y));
+                pos.x = x; pos.y = y;
+                f(pos);
             }
         }
     }
 };
 
 namespace Helpers {
-    int colCharToIndex(char col);
     void toLower(std::string& s);
 }

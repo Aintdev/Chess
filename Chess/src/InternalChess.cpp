@@ -1,6 +1,8 @@
 ﻿#include "ChessGame.h"
 #include <iostream>
 #include <string>
+#include "Logger.h"
+#include <chrono>
 
 // TESTING SPECIFIC FUNTIONS. IGNORE FOR MAKING GAME CLASSES
 
@@ -9,7 +11,7 @@ void printBoard(ChessGame& game) {
     for (int y = 7; y >= 0; --y) {      // print top to bottom
         std::cout << y + 1 << " |  ";
         for (int x = 0; x < 8; ++x) {
-            char c = game.board[x][y].getPieceIcon();
+            char c = game.getPieceAt(Position(x, y))->getPieceIcon();
             std::cout << c << " ";
         }
         std::cout << " | " << y + 1 << "\n";
@@ -17,24 +19,35 @@ void printBoard(ChessGame& game) {
     std::cout << "  |-------------------|\n     A B C D E F G H\n";
 }
 
+
+
 int main() {
-    ChessGame game;
+    long long total = 0;
 
+    for (int i = 0; i < 100; ++i) {
+        ChessGame tgame;
+        auto start = std::chrono::high_resolution_clock::now();
+
+        tgame.tryMove(Move(Position('E', 2), Position('E', 4)));
+
+        auto end = std::chrono::high_resolution_clock::now();
+
+        total += std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
+    }
+
+    std::cout << "Average: " << (total / 100.0) << " us\n";
     
-
-
-
-
-
-
-
+    
+    ChessGame game;
+    /*
     game.tryMove(Position('B', 2), Position('B', 4));
     game.tryMove(Position('B', 4), Position('B', 5));
     std::cout << "\n\n\n\n\n\n\n\n\n\n\n\n";
     game.tryMove(Position('C', 7), Position('C', 5));
     std::cout << game.board[2][5].enPassantable << std::endl;
-
-
+    */
+    //game.clearBoard();
+    game.setPiece(Position('C', 3), Piece(PieceType::BISHOP, Color::WHITE));
 
     printBoard(game);
     while (1) {
@@ -47,7 +60,7 @@ int main() {
         int toRow = to[1] - '0';
         //Position(from[0], fromRow);
         //Position(to[0], toRow);
-        game.tryMove(Position(from[0], fromRow), Position(to[0], toRow)); 
+        if (!game.tryMove(Position(from[0], fromRow), Position(to[0], toRow))) Log.error("Piece can't move to that location");
 
         printBoard(game);
     }

@@ -10,19 +10,19 @@ std::vector<Move> ChessGame::generateMoves(Color color) { // calls every chess p
 
     generatedMoves.reserve(256); // sollte für alles reichen und ein bischen mehr
 
-    forEachSquare([&](Position from) {
+    forEachSquare([&](const Position& from) {
         const Piece& piece = board[from.x][from.y];
 
         // nur die passenden Pieces
         if (piece.color != color) return;
 
         // Alle möglichen Zielfelder
-        forEachSquare([&](Position to) {
+        forEachSquare([&](const Position& to) {
             if (from.x == to.x && from.y == to.y) return; // überspringe gleiche Position
 
             Move m(from, to);
             if (isLegal(m)) {
-                Log.tprefix("\ngenerateMoves/FoundMove").info("Move found." + std::to_string(from.x) + "|" + std::to_string(from.y) + " -> " +
+                Log.tprefix("generateMoves/FoundMove").info("Valid Move found for " + board[from.x][from.y].getPieceName() + "." + std::to_string(from.x) + "|" + std::to_string(from.y) + " -> " +
                     std::to_string(to.x) + "|" + std::to_string(to.y));
                 Extra isDouble = m.isMoveDouble(board[from.x][from.y].color) ? Extra::DOUBLE : Extra::NONE;
                 generatedMoves.emplace_back(from, to, isDouble);

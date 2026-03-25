@@ -1,10 +1,8 @@
 #include "ChessGame.h"
 #include <array>
 
-using Board = std::array<std::array<Piece, 8>, 8>;
-
-Board initDefaultBoard() {
-    Board board{}; // all default Pieces (PieceType::NONE)
+Arr8By8 initDefaultBoard() {
+    Arr8By8 board{}; // all default Pieces (PieceType::NONE)
 
     // Pawns
     for (int x = 0; x < 8; x++) {

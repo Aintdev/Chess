@@ -1,4 +1,4 @@
 #pragma once
 #include "ChessGame.h" 
 
-Board initDefaultBoard();
+Arr8By8 initDefaultBoard();
