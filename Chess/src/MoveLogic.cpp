@@ -4,11 +4,11 @@
 #include <cstdlib>
 #include <string>
 
-std::vector<Move> ChessGame::generateMoves(Color color) { // calls every chess pieces moves and puts it all in a vector 
+std::vector<Move> ChessGame::generateMoves(Color color) {
     std::vector<Move> generatedMoves;
     if (color == Color::NONE) return generatedMoves;
 
-    generatedMoves.reserve(256); // sollte für alles reichen und ein bischen mehr
+    generatedMoves.reserve(256);
 
     forEachSquare([&](const Position& from) {
         const Piece& piece = board[from.x][from.y];
@@ -18,7 +18,7 @@ std::vector<Move> ChessGame::generateMoves(Color color) { // calls every chess p
 
         // Alle möglichen Zielfelder
         forEachSquare([&](const Position& to) {
-            if (from.x == to.x && from.y == to.y) return; // überspringe gleiche Position
+            if (from.x == to.x && from.y == to.y) return;
 
             Move m(from, to);
             if (isLegal(m)) {
@@ -41,8 +41,8 @@ bool ChessGame::isLegal(const Move& move) const {
         srcP.color != tgtP.color &&
         pieceCanMoveLikeThat(move))
         return true;
-    //Log.tprefix("isLegal/SPAM").info("Move " + std::to_string(move.from.x) + "|" + std::to_string(move.from.y) + " -> " +
-    //    std::to_string(move.to.x) + "|" + std::to_string(move.to.y) + " turned out illegal.");
+    Log.tprefix("isLegal/SPAM").info("Move " + std::to_string(move.from.x) + "|" + std::to_string(move.from.y) + " -> " +
+        std::to_string(move.to.x) + "|" + std::to_string(move.to.y) + " turned out illegal.");
     return false;
 }
 
