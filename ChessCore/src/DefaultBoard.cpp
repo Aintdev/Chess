@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "ChessGame.h"
-#include <array>
+
 
 Arr8By8 initDefaultBoard() {
     Arr8By8 board{}; // all default Pieces (PieceType::NONE)

@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "ChessGame.h"
-#include <locale>
+
 
 Piece::Piece(PieceType giventype, Color givencolor)
     : type(giventype), color(givencolor), hasMoved(false), enPassantable(false) {

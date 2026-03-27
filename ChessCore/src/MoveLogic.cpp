@@ -1,9 +1,9 @@
 #include "pch.h"
 #include "ChessGame.h"
 #include "Logger.h"
-#include "iostream"
+
 #include <cstdlib>
-#include <string>
+
 
 std::vector<Move> ChessGame::generateMoves(Color color) {
     std::vector<Move> generatedMoves;
