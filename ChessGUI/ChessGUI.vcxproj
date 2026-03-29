@@ -24,6 +24,7 @@
     <ProjectGuid>{26492B68-0509-4CE0-B252-CA6A0D806873}</ProjectGuid>
     <RootNamespace>ChessGUI</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>ChessGUI</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">

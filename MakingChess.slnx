@@ -4,5 +4,5 @@
     <Platform Name="x86" />
   </Configurations>
   <Project Path="ChessCore/ChessCore.vcxproj" Id="4e71498e-3296-451d-a170-c25b59352ebd" />
-  <Project Path="ChessGUI/ChessGUI.vcxproj" Id="26492b68-0509-4ce0-b252-ca6a0d806873" />
+  <Project Path="GUI/GUI.vcxproj" Id="0892a852-84e3-4eb0-97e3-0771e4360ce7" />
 </Solution>
