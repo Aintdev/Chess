@@ -23,9 +23,12 @@ void benchmark(long int ITERATIONS) {
     std::string line;
     std::getline(std::cin, line);
 
-    //BENCHMARK PREP
+    // region BENCHMARK PREP
+    
     Move m(Position('E', 2), Position('E', 4));
-
+    
+    // endregion BENCHMARK PREP END
+    
     std::cout << "Starte Benchmark... \n";
     int lastPercent = 0;
     for (int i = 0; i < ITERATIONS; ++i) {
