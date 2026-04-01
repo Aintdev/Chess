@@ -1,5 +1,7 @@
 #include "pch.h"
-#include "Chess.h"
+#include "ChessGame.h"
+#include "Helpers.h"
+#include "Position.h"
 #include "DefaultBoard.h"
 
 ChessGame::ChessGame() : board(Helpers::initDefaultBoard()) {}

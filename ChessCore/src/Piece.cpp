@@ -1,5 +1,6 @@
 #include "pch.h"
-#include "Chess.h"
+#include "Piece.h"
+#include "Helpers.h"
 
 
 Piece::Piece(PieceType giventype, Color givencolor)

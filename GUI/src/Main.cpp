@@ -1,5 +1,4 @@
 #include "Chess.h"
-#include "Logger.h"
 #include <iostream>
 #include <chrono>
 #include <string>

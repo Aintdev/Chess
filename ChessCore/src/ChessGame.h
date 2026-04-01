@@ -1,61 +1,12 @@
 #pragma once
 #include "pch.h"
-#include <vector>
-#include <stdexcept>
-#include <utility>
-
-enum class PieceType { NONE, PAWN, ROOK, KNIGHT, BISHOP, QUEEN, KING };
-enum class Color { NONE, WHITE, BLACK };
-enum class Extra { NONE, DOUBLE };
-enum class MoveType { NONE, HORIZONTAL, VERTICAL, DIAGONAL, LSHAPE};
-
-struct Position {
-    int x;
-    int y;
-
-    Position() = default;
-    Position(int x, int y);
-    Position(char x, int y);
-    
-    bool operator==(const Position& other);
-
-    int colCharToIndex(char col) const;
-    bool inBoard() const;
-};
-
-struct Piece {
-    PieceType type = PieceType::NONE;
-    Color color = Color::NONE;
-    bool hasMoved = false;
-    bool enPassantable = false;
-
-    Piece() = default;
-    Piece(PieceType giventype, Color givencolor);
-
-    char getPieceIcon() const;
-    std::string getPieceName() const;
-    bool isColor(Color exColor) const;
-    bool exists() const;
-};
-
-struct Move {
-    Position from;
-    Position to;
-    MoveType moveType;
-    Extra ex;
-
-    Move(const Position& from, const Position& to, Extra ex = Extra::NONE);
-    
-    void isEnpassant() const;
-    MoveType getMoveType() const;
-
-    bool isMoveDouble(Color src) const;
-    bool operator==(const Move& other) const;
-};
-
-using Arr8By8 = std::array<std::array<Piece, 8>, 8>;
+#include "Enums.h"
+#include "Piece.h"
+#include "Move.h"
+#include "Position.h"
 
 class ChessGame {
+    using Arr8By8 = std::array<std::array<Piece, 8>, 8>;
     Arr8By8 board;
     Color toMove = Color::WHITE;
 
@@ -112,8 +63,3 @@ public:
         }
     }
 };
-
-namespace Helpers {
-    void toLower(std::string& s);
-    Arr8By8 initDefaultBoard();
-}

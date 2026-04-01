@@ -1,7 +1,7 @@
 #include "pch.h"
-#include "Chess.h"
+#include "ChessGame.h"
 #include "Logger.h"
-
+#include "Position.h"
 #include <cstdlib>
 
 

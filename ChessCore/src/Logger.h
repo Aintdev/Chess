@@ -1,7 +1,6 @@
 #pragma once
 #include "pch.h"
 
-
 #define Log Logger::get()
 #define GREEN  "\033[32m"
 #define YELLOW "\033[33m"
